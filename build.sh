@@ -9,6 +9,7 @@ git submodule update
 source poky/oe-init-build-env
 
 CONFLINE="MACHINE = \"qemuarm64\""
+NETCONF="CONNECTIVITY_CHECK_URIS = \"https://www.example.com/\""
 
 cat conf/local.conf | grep "${CONFLINE}" > /dev/null
 local_conf_info=$?
@@ -21,6 +22,16 @@ else
 	echo "${CONFLINE} already exists in the local.conf file"
 fi
 
+cat conf/local.conf | grep "${NETCONF}" > /dev/null
+net_conf_info=$?
+
+if [ $net_conf_info -ne 0 ];then
+	echo "Append ${NETCONF} in the local.conf file"
+	echo ${NETCONF} >> conf/local.conf
+	
+else
+	echo "${NETCONF} already exists in the local.conf file"
+fi
 
 bitbake-layers show-layers | grep "meta-aesd" > /dev/null
 layer_info=$?
